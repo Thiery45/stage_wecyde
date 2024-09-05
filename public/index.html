@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Scraping Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Data Scraping Tool</h1>
+            <p>Extract relevant information quickly and efficiently</p>
+        </header>
+
+        <main>
+            <form id="scrapingForm" class="scraping-form">
+                <div class="form-group">
+                    <label for="search">Search Query:</label>
+                    <input type="text" id="search" name="search" class="input-field" placeholder="Enter your search query" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" class="input-field" placeholder="Enter location" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="num_urls">Number of Results:</label>
+                    <input type="number" id="num_urls" name="num_urls" class="input-field" placeholder="Enter number of results" required>
+                </div>
+
+                <button type="submit" class="btn">Start Scraping</button>
+            </form>
+
+            <p id="message" class="status-message"></p>
+            <div id="downloadLink"></div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Data Scraping Tool. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('scrapingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const searchQuery = document.getElementById('search').value;
+            const location = document.getElementById('location').value;
+            const numUrls = document.getElementById('num_urls').value;
+
+            document.getElementById('message').textContent = 'Scraping in progress...';
+
+            const response = await fetch('/start-scraping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ search: searchQuery, location: location, num_urls: numUrls })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById('message').textContent = 'Scraping completed!';
+                document.getElementById('downloadLink').innerHTML = `<a href="${result.fileUrl}" class="download-link" download>Download Results</a>`;
+            } else {
+                document.getElementById('message').textContent = 'Error during scraping';
+            }
+        });
+    </script>
+</body>
+</html>
